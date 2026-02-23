@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mobile App Developers</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@700;900&display=swap');
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            /* Добавили твою картинку на фон */
+            background: url('https://www.restart.run/_next/image?url=https%3A%2F%2Fcdn.sanity.io%2Fimages%2Fwii1y9hm%2Fproduction%2Fc7883d951981a4c1d536589d822201316ee6796d-3560x2002.png%3Ffm%3Dwebp%26fit%3Dmax&w=2120&q=90') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            display: flex;
+            justify-content: center;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 480px;
+            min-height: 100vh;
+            /* Сделали фирменный зеленый цвет полупрозрачным, чтобы было видно фон */
+            background-color: rgba(30, 215, 43, 0.75);
+            backdrop-filter: blur(5px); /* Легкое размытие заднего фона */
+            position: relative;
+            padding: 20px 10px 80px 10px;
+            overflow-x: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo-title {
+            font-size: 28px;
+            font-weight: 900;
+            color: #fff;
+            text-shadow: 2px 2px 0px #0e8418, -1px -1px 0 #0e8418, 1px -1px 0 #0e8418, -1px 1px 0 #0e8418, 1px 1px 0 #0e8418;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            line-height: 1.2;
+        }
+
+        .active-users {
+            background-color: #2b70d4;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 8px;
+            display: inline-block;
+            font-size: 14px;
+            border: 2px solid #fff;
+            box-shadow: 0 4px 0px #1a4a91;
+        }
+        
+        .active-users span {
+            color: #ffeb3b;
+        }
+
+        .instruction {
+            text-align: center;
+            font-size: 14px;
+            margin: 20px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Grid Items */
+        .items-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 5px;
+        }
+
+        .item-card {
+            background-color: #fff;
+            border-radius: 12px;
+            padding: 10px 5px;
+            text-align: center;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: transform 0.1s, border 0.1s;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 115px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .item-card.selected {
+            border: 3px solid #ff9800;
+            transform: scale(0.95);
+            background-color: #fffde7;
+        }
+
+        /* Безопасный контейнер для картинок */
+        .item-icon-box {
+            width: 55px;
+            height: 55px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .item-icon-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .item-name {
+            font-size: 10px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        /* Sticky Footer Button */
+        .sticky-footer {
+            position: fixed;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100%;
+            max-width: 480px;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 20px;
+            display: none;
+            justify-content: center;
+        }
+
+        .btn-primary {
+            background-color: #222;
+            color: #fff;
+            border: none;
+            padding: 18px 30px;
+            font-size: 18px;
+            font-weight: 900;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            text-transform: uppercase;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-box {
+            background-color: #555c55;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 15px;
+            padding: 25px 20px;
+            color: white;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+
+        .modal-title {
+            font-size: 22px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #777;
+            padding-bottom: 10px;
+            font-weight: 900;
+        }
+
+        /* Modal Step 1 */
+        .selected-items-preview {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preview-circle {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #777;
+            overflow: hidden;
+        }
+
+        .preview-circle img {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+        }
+
+        .username-input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            outline: none;
+            font-size: 16px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: 700;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            flex: 1;
+            background-color: #888;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-submit {
+            flex: 1;
+            background-color: #fff;
+            color: #333;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 900;
+            cursor: pointer;
+        }
+
+        /* Modal Step 2: Robux Spinner */
+        .loader-container {
+            padding: 40px 0 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .robux-spinner {
+            width: 60px;
+            height: 60px;
+            background-color: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(45deg);
+            animation: robux-spin 1.5s infinite ease-in-out;
+        }
+
+        .robux-spinner::after {
+            content: '';
+            width: 24px;
+            height: 24px;
+            background-color: #000;
+        }
+
+        @keyframes robux-spin {
+            0% { transform: rotate(45deg) scale(1); }
+            50% { transform: rotate(225deg) scale(1.1); }
+            100% { transform: rotate(405deg) scale(1); }
+        }
+
+        /* Modal Step 3 */
+        .avatar-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background-color: #ffca28;
+            margin: 0 auto 15px auto;
+            border: 3px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .success-username {
+            font-size: 18px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+    <div class="header">
+        <div class="logo-title">Mobile App<br>Developers</div>
+        <div class="active-users">Active users : <span>505</span></div>
+    </div>
+
+    <div class="instruction">Select up to 3 items you wish to get</div>
+
+    <div class="items-grid" id="itemsGrid"></div>
+
+    <div class="sticky-footer" id="stickyFooter">
+        <button class="btn-primary" onclick="openModal()">Get Insights</button>
+    </div>
+</div>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        
+        <div id="step1">
+            <div class="modal-title">Get Insights</div>
+            <div style="font-size: 13px; margin-bottom: 15px; font-weight: 700;">Would you like to get these items?</div>
+            <div class="selected-items-preview" id="previewContainer"></div>
+            <input type="text" id="usernameInput" class="username-input" placeholder="Enter your Roblox username">
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+                <button class="btn-submit" onclick="startLoading()">Get Insights</button>
+            </div>
+        </div>
+
+        <div id="step2" class="hidden">
+            <div class="modal-title">Get Insights</div>
+            <div class="loader-container">
+                <div class="robux-spinner"></div>
+                <div id="loadingText" style="font-weight: 700; font-size: 16px;">Searching for...</div>
+            </div>
+        </div>
+
+        <div id="step3" class="hidden">
+            <div class="modal-title">Get Insights</div>
+            <div class="avatar-circle">👩🏼</div>
+            <div class="success-username" id="successUsername">@username</div>
+            <button class="btn-submit" style="width: 100%;" onclick="finalAction()">Get Insights</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    const items = [
+        { id: 1, name: "Ancient pack", img: "https://tr.rbxcdn.com/180DAY-24e6da41abd816b879b34aa5d968944f/420/420/BackAccessory/Webp/noFilter" },
+        { id: 2, name: "Dragon Pepper", img: "https://tr.rbxcdn.com/180DAY-79207bc8d3bc6002dd2574475ac86551/420/420/ShoulderAccessory/Webp/noFilter" },
+        { id: 3, name: "Bone blossom", img: "https://lh7-rt.googleusercontent.com/docsz/AD_4nXc-OPO-ZGMSW-9St2LZ195P1OmEVhVG5RqpWVPhQq89JA_WUO8gSllWYKylRCJrJpgrpmHofkMkZZKch3K8lT5BbzEgCETmwBJtlXgHb5Uiup5sJbC-EdMqTV1de_KpqJmnyw8Vcg?key=UWwyE38KvvfT-2FjIlhS6g" },
+        { id: 4, name: "Super-Seed", img: "https://tr.rbxcdn.com/180DAY-066f03897647e68799d6942fa9415421/420/420/BackAccessory/Webp/noFilter" },
+        { id: 5, name: "Candy-Blossom", img: "https://tr.rbxcdn.com/180DAY-29bf468c8297637b927b04b332c71bb7/420/420/BackAccessory/Webp/noFilter" },
+        { id: 6, name: "Raccon", img: "https://tr.rbxcdn.com/180DAY-5cc9556a8217825a9586b583e30f6748/420/420/BackAccessory/Webp/noFilter" },
+        
+        { id: 7, name: "Pterodactyl", img: "https://tr.rbxcdn.com/180DAY-24e6da41abd816b879b34aa5d968944f/420/420/BackAccessory/Webp/noFilter" },
+        { id: 8, name: "Elephant-Ears", img: "https://tr.rbxcdn.com/180DAY-79207bc8d3bc6002dd2574475ac86551/420/420/ShoulderAccessory/Webp/noFilter" },
+        { id: 9, name: "T-Rex", img: "https://tr.rbxcdn.com/180DAY-066f03897647e68799d6942fa9415421/420/420/BackAccessory/Webp/noFilter" },
+        { id: 10, name: "Mimic Octopus", img: "https://tr.rbxcdn.com/180DAY-29bf468c8297637b927b04b332c71bb7/420/420/BackAccessory/Webp/noFilter" },
+        { id: 11, name: "Brontosaurus", img: "https://tr.rbxcdn.com/180DAY-5cc9556a8217825a9586b583e30f6748/420/420/BackAccessory/Webp/noFilter" },
+        { id: 12, name: "Sprinkler", img: "https://tr.rbxcdn.com/180DAY-24e6da41abd816b879b34aa5d968944f/420/420/BackAccessory/Webp/noFilter" }
+    ];
+
+    let selectedItems = [];
+
+    const grid = document.getElementById('itemsGrid');
+    const stickyFooter = document.getElementById('stickyFooter');
+
+    items.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+        card.innerHTML = `
+            <div class="item-icon-box">
+                <img src="${item.img}" alt="${item.name}" onerror="this.style.display='none'">
+            </div>
+            <div class="item-name">${item.name}</div>
+        `;
+        
+        card.onclick = () => toggleSelection(card, item);
+        grid.appendChild(card);
+    });
+
+    function toggleSelection(element, item) {
+        const index = selectedItems.findIndex(i => i.id === item.id);
+        
+        if (index > -1) {
+            selectedItems.splice(index, 1);
+            element.classList.remove('selected');
+        } else {
+            if (selectedItems.length < 3) {
+                selectedItems.push(item);
+                element.classList.add('selected');
+            } else {
+                element.style.transform = "translateX(5px)";
+                setTimeout(() => element.style.transform = "none", 100);
+            }
+        }
+
+        if (selectedItems.length > 0) {
+            stickyFooter.style.display = 'flex';
+        } else {
+            stickyFooter.style.display = 'none';
+        }
+    }
+
+    const modalOverlay = document.getElementById('modalOverlay');
+    const step1 = document.getElementById('step1');
+    const step2 = document.getElementById('step2');
+    const step3 = document.getElementById('step3');
+
+    function openModal() {
+        modalOverlay.style.display = 'flex';
+        step1.classList.remove('hidden');
+        step2.classList.add('hidden');
+        step3.classList.add('hidden');
+
+        const previewContainer = document.getElementById('previewContainer');
+        previewContainer.innerHTML = '';
+        selectedItems.forEach(item => {
+            previewContainer.innerHTML += `
+                <div class="preview-circle">
+                    <img src="${item.img}" onerror="this.style.display='none'">
+                </div>
+            `;
+        });
+    }
+
+    function closeModal() {
+        modalOverlay.style.display = 'none';
+        document.getElementById('usernameInput').value = '';
+    }
+
+    function startLoading() {
+        const username = document.getElementById('usernameInput').value.trim();
+        if (!username) {
+            alert('Please enter your Roblox username');
+            return;
+        }
+
+        step1.classList.add('hidden');
+        step2.classList.remove('hidden');
+        document.getElementById('loadingText').innerText = `Searching for @${username}`;
+
+        setTimeout(() => showSuccess(username), 2500);
+    }
+
+    function showSuccess(username) {
+        step2.classList.add('hidden');
+        step3.classList.remove('hidden');
+        document.getElementById('successUsername').innerText = `@${username}`;
+    }
+
+    function finalAction() {
+        // Замени ссылку ниже на свой оффер
+        window.location.href = "https://google.com";
+    }
+</script>
+
+</body>
+</html>
